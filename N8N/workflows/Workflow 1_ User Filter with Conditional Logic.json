@@ -1,0 +1,425 @@
+{
+  "name": "Workflow 1: User Filter with Conditional Logic",
+  "nodes": [
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.id }}",
+                    "rightValue": 3,
+                    "operator": {
+                      "type": "number",
+                      "operation": "lte"
+                    },
+                    "id": "3b1ebbd1-0bae-4a18-8e0a-f065285a0472"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Basic (ID <= 3)"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "bed6386d-1e23-41e2-8d37-c993c04d11e6",
+                    "leftValue": "={{ $json.id }}",
+                    "rightValue": 4,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gte"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Premium (ID >= 4)"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        64,
+        464
+      ],
+      "id": "5aad0c70-2e61-4f51-afa4-f212bec4ddfe",
+      "name": "Switch by ID"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "premium-id",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "number"
+            },
+            {
+              "id": "premium-fullname",
+              "name": "full_name",
+              "value": "={{ $json.first_name }} {{ $json.last_name }}",
+              "type": "string"
+            },
+            {
+              "id": "premium-email",
+              "name": "email",
+              "value": "={{ $json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "premium-avatar",
+              "name": "avatar",
+              "value": "={{ $json.avatar }}",
+              "type": "string"
+            },
+            {
+              "id": "premium-tier",
+              "name": "tier",
+              "value": "Premium",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c92b4cc0-8451-4769-baf0-1eaef9051ff0",
+      "name": "Format Premium Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        512,
+        592
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "basic-id",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "number"
+            },
+            {
+              "id": "basic-fullname",
+              "name": "full_name",
+              "value": "={{ $json.first_name }} {{ $json.last_name }}",
+              "type": "string"
+            },
+            {
+              "id": "basic-email",
+              "name": "email",
+              "value": "={{ $json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "basic-tier",
+              "name": "tier",
+              "value": "Basic",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7e597c2e-d338-4562-8d66-d0436186a0f0",
+      "name": "Format Basic Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        352,
+        336
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        752,
+        464
+      ],
+      "id": "f8ef9d20-8113-4f79-84f3-192756d91e52",
+      "name": "Merge Both Tiers"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all items from both branches\nconst allItems = $input.all();\n\n// Initialize the result structure\nconst result = {\n  data: {\n    basic_data: [],\n    premium_data: []\n  },\n  summary: {\n    total_users: allItems.length,\n    basic_count: 0,\n    premium_count: 0\n  },\n  metadata: {\n    processed_at: new Date().toISOString(),\n    source: 'ReqRes API'\n  }\n};\n\n// Separate users by tier\nfor (const item of allItems) {\n  const user = item.json;\n  \n  if (user.tier === 'Premium') {\n    result.data.premium_data.push({\n      id: user.id,\n      full_name: user.full_name,\n      email: user.email,\n      avatar: user.avatar\n    });\n    result.summary.premium_count++;\n  } else if (user.tier === 'Basic') {\n    result.data.basic_data.push({\n      id: user.id,\n      full_name: user.full_name,\n      email: user.email\n    });\n    result.summary.basic_count++;\n  }\n}\n\nreturn result;"
+      },
+      "id": "0ad83000-2d7b-42b0-8e86-676e1a4f2a89",
+      "name": "Combine into Single Object",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        976,
+        464
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n\"data\": \"{{ $('Combine into Single Object').item.json.data }}\"\n}",
+        "options": {}
+      },
+      "id": "4de49aa0-b3aa-4078-b668-9fa633d76e5a",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1184,
+        464
+      ]
+    },
+    {
+      "parameters": {
+        "path": "example-1",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -592,
+        464
+      ],
+      "id": "10352a1f-28bf-4f9a-aab2-d5a04eb56a6d",
+      "name": "Webhook1",
+      "webhookId": "example-1"
+    },
+    {
+      "parameters": {
+        "url": "https://reqres.in/api/users",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "reqres-free-v1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "75028e9f-2bcb-4262-a2f8-f86415f92e2c",
+      "name": "Fetch Users1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -368,
+        464
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "id": "3bf32105-9ac5-4a8b-bf87-0d0b096573c4",
+      "name": "Split Out Users1",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        464
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3b5f2a15-22d5-43ef-885d-19c3886d115e",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "reqres",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        272,
+        592
+      ],
+      "id": "fc941e0b-a117-47db-a8aa-711746506473",
+      "name": "Filter"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -592,
+        640
+      ],
+      "id": "6abd923c-9825-4397-9f4f-f57129438503",
+      "name": "When clicking ‘Execute workflow’"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Switch by ID": {
+      "main": [
+        [
+          {
+            "node": "Format Basic Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Premium Data": {
+      "main": [
+        [
+          {
+            "node": "Merge Both Tiers",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Format Basic Data": {
+      "main": [
+        [
+          {
+            "node": "Merge Both Tiers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Both Tiers": {
+      "main": [
+        [
+          {
+            "node": "Combine into Single Object",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine into Single Object": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Fetch Users1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Users1": {
+      "main": [
+        [
+          {
+            "node": "Split Out Users1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out Users1": {
+      "main": [
+        [
+          {
+            "node": "Switch by ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Format Premium Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Fetch Users1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ab10de24-5a1a-4a37-8ed7-2b46dd84005a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "578b25537497e99d4d328919d1005fb21b32967cd27b1388a11a6b2d1d94a8cc"
+  },
+  "id": "G6VYjiEBCLSrPMSg",
+  "tags": []
+}
