@@ -1,0 +1,630 @@
+{
+  "name": "AI Hackathon Assessment - Connect Dify",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1168,
+        240
+      ],
+      "id": "7bbe3d01-f51c-4e86-9222-9f92dff4b3f5",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://aibot.cloudstaff.io/v1/workflows/run",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"inputs\": {\n    \"query\": \"{{ $json.query || 'Get the result of all students' }}\"\n  },\n  \"response_mode\": \"blocking\",\n  \"user\": \"{{ $json.user || 'abc-123' }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -944,
+        240
+      ],
+      "id": "da05a573-ce6d-4dbb-8f36-33d301b151d5",
+      "name": "Call Dify Workflow"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the Dify response\nconst response = $input.first().json;\n\n// Extract the data field which contains the stringified JSON\nconst dataString = response.data?.outputs?.data || response.data?.outputs?.text || '{}';\n\n// Parse the stringified data\nlet parsed;\ntry {\n  parsed = typeof dataString === 'string' ? JSON.parse(dataString) : dataString;\n} catch (e) {\n  console.error('Failed to parse data:', e);\n  parsed = { data: [], insight: 'Failed to parse response' };\n}\n\n// Return the parsed data with both data array and insight\nreturn {\n  data: parsed.data || [],\n  insight: parsed.insight || 'No insight provided',\n  raw_response: response\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -720,
+        240
+      ],
+      "id": "8af96b4d-8c91-4277-90d7-02d3c029ef66",
+      "name": "Parse Dify Response"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -496,
+        240
+      ],
+      "id": "5652e32f-871a-45b7-98e6-85ac393947c0",
+      "name": "Split Out Records"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "a5befa48-c40a-4243-b2a0-f5ccf080a998",
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "Present",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Present"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "94c95387-352c-47b6-8f7d-41ca1f0c3b2d",
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "Late",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Late"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "cd6c1f2f-a4c3-4ca5-b2dc-1e2e61d7d88c",
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "Absent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Absent"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c13cd484-b624-40b5-9ff6-85ab070de31c",
+      "name": "Switch by Attendance Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        -272,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "present-1",
+              "name": "status",
+              "value": "Present",
+              "type": "string"
+            },
+            {
+              "id": "present-2",
+              "name": "first_name",
+              "value": "={{ $json.first_name }}",
+              "type": "string"
+            },
+            {
+              "id": "present-3",
+              "name": "last_name",
+              "value": "={{ $json.last_name }}",
+              "type": "string"
+            },
+            {
+              "id": "present-4",
+              "name": "email",
+              "value": "={{ $json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "89ec54da-3603-450d-b3ba-c88213af6495",
+              "name": "date",
+              "value": "={{ $json.date }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c74d0f40-f836-4cda-b1df-7685aa728b7d",
+      "name": "Format Present",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -48,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "late-1",
+              "name": "status",
+              "value": "Late",
+              "type": "string"
+            },
+            {
+              "id": "late-2",
+              "name": "first_name",
+              "value": "={{ $json.first_name }}",
+              "type": "string"
+            },
+            {
+              "id": "late-3",
+              "name": "last_name",
+              "value": "={{ $json.last_name }}",
+              "type": "string"
+            },
+            {
+              "id": "late-4",
+              "name": "email",
+              "value": "={{ $json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "late-5",
+              "name": "date",
+              "value": "={{ $json.date }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "18972397-f1b7-4a28-8a79-5e6faa0f760b",
+      "name": "Format Late",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -48,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "absent-1",
+              "name": "status",
+              "value": "Absent",
+              "type": "string"
+            },
+            {
+              "id": "absent-2",
+              "name": "first_name",
+              "value": "={{ $json.first_name }}",
+              "type": "string"
+            },
+            {
+              "id": "absent-3",
+              "name": "last_name",
+              "value": "={{ $json.last_name }}",
+              "type": "string"
+            },
+            {
+              "id": "absent-4",
+              "name": "email",
+              "value": "={{ $json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "absent-5",
+              "name": "date",
+              "value": "={{ $json.date }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "47ed6d69-c822-42e6-8235-39398b00871d",
+      "name": "Format Absent",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -48,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "c77fdcaf-e81e-4006-937e-3e3b7aa9c76a",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        880,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "create-users",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "c2e12c7d-5034-48b1-a709-541704a5ec16",
+      "name": "Webhook Trigger1",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -1168,
+        448
+      ],
+      "webhookId": "create-users-webhook"
+    },
+    {
+      "parameters": {
+        "binaryPropertyName": "={{ $('Format Present') }}",
+        "options": {
+          "fileName": "present"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        192,
+        48
+      ],
+      "id": "e2914e69-9801-411e-821c-a5f3b66be033",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "binaryPropertyName": "={{ $('Format Present') }}",
+        "options": {
+          "fileName": "late"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        192,
+        240
+      ],
+      "id": "bc9f9e6b-ea49-4aad-b04c-098bd4627b77",
+      "name": "Convert to File1"
+    },
+    {
+      "parameters": {
+        "binaryPropertyName": "={{ $('Format Present') }}",
+        "options": {
+          "fileName": "absent"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        176,
+        432
+      ],
+      "id": "4a11d7a1-6065-4f4c-ae00-f2a5851e2421",
+      "name": "Convert to File2"
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "[object Object]",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1znV3qYqqjTeKeoie_ZHi-kQTD_N3-NQK",
+          "mode": "list",
+          "cachedResultName": "Attendance Report",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1znV3qYqqjTeKeoie_ZHi-kQTD_N3-NQK"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        496,
+        224
+      ],
+      "id": "52d64f9b-5856-4726-b690-82754c80f973",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "dwB6UaILuZFPZlP4",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  item.json.myNewField = 1;\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        224
+      ],
+      "id": "689debd6-4326-41b2-ab7d-dbbd18d9ab1b",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Generate Users1": {
+      "main": [
+        [
+          {
+            "node": "Switch by User Level1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Call Dify Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Dify Workflow": {
+      "main": [
+        [
+          {
+            "node": "Parse Dify Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Dify Response": {
+      "main": [
+        [
+          {
+            "node": "Split Out Records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out Records": {
+      "main": [
+        [
+          {
+            "node": "Switch by Attendance Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch by Attendance Type": {
+      "main": [
+        [
+          {
+            "node": "Format Present",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Late",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Absent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Present": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Late": {
+      "main": [
+        [
+          {
+            "node": "Convert to File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Absent": {
+      "main": [
+        [
+          {
+            "node": "Convert to File2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Call Dify Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File1": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File2": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a1624bc8-83ce-4876-a169-32f1f30602a4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "578b25537497e99d4d328919d1005fb21b32967cd27b1388a11a6b2d1d94a8cc"
+  },
+  "id": "UiHfnamcaqoNCpgc",
+  "tags": []
+}
