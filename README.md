@@ -105,3 +105,8 @@ taskkill /PID 12345 /F
 ```
 
 If you need to use a different port, see the instructions above for changing the port number.
+
+#dify account creation, and gemini setup instructions
+
+Please click on this link and follow the instructions
+https://gamma.app/docs/Account-Creation-9rsn6yar222p14l
