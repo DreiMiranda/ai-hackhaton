@@ -23,7 +23,7 @@ cd ai-hackhaton
 
 ## Getting Started
 
-### Option 1: Using npm
+### Option 1: Using npm (Local Install)
 
 #### 1. Install npm (Node.js)
 If you don't have npm installed, download and install Node.js from the official website:
@@ -50,7 +50,29 @@ This will launch the application as defined in the `start` script of `package.js
 
 ---
 
-### Option 2: Using Docker Compose
+### Option 2: Global Install with npm
+
+If you prefer to install n8n globally, you can use:
+
+```bash
+npm install -g n8n
+```
+
+After installing globally, you can start n8n from any directory with:
+
+```bash
+n8n start
+```
+
+You can also specify a port:
+
+```bash
+n8n start --port 5678
+```
+
+---
+
+### Option 3: Using Docker Compose
 
 If you have Docker installed, you can run n8n using Docker Compose:
 
@@ -106,7 +128,9 @@ taskkill /PID 12345 /F
 
 If you need to use a different port, see the instructions above for changing the port number.
 
-#dify account creation, and gemini setup instructions
+---
 
-Please click on this link and follow the instructions
+# dify account creation, and gemini setup instructions
+
+Please click on this link and follow the instructions  
 https://gamma.app/docs/Account-Creation-9rsn6yar222p14l

@@ -88,10 +88,10 @@
       "type": "n8n-nodes-base.formTrigger",
       "typeVersion": 2.3,
       "position": [
-        -512,
-        -32
+        -848,
+        192
       ],
-      "id": "c7f6351f-f2b1-41a6-9d9a-2041c5273e74",
+      "id": "48a39f30-95b2-4256-9d7f-9ec041b9c0a1",
       "name": "Product Inquiry Form",
       "webhookId": "enhanced-product-inquiry"
     },
@@ -124,15 +124,15 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        -288,
-        -32
+        -624,
+        192
       ],
-      "id": "9199d42d-e6aa-47ac-9a9c-8ad3a6fed049",
+      "id": "a2bddd4a-ed34-4ca6-89ca-269127db9cde",
       "name": "Check Existing Customer",
       "alwaysOutputData": true,
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "fUe94vkJLG6SK9KT",
+          "id": "2OcSoCbGb7Ulbuhl",
           "name": "Google Sheets account"
         }
       }
@@ -164,10 +164,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -64,
-        -32
+        -400,
+        192
       ],
-      "id": "e7c2cc42-22b2-4125-a057-9035497291f8",
+      "id": "049c497d-8ae5-4e41-b2d5-74916df547b0",
       "name": "Is New Customer?"
     },
     {
@@ -208,10 +208,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        160,
-        -128
+        -176,
+        96
       ],
-      "id": "8949fc26-d989-4682-98cd-2b2362392fa6",
+      "id": "ac488e2b-cfce-438f-bc43-2c4fb0c1ebcb",
       "name": "Is High Priority?"
     },
     {
@@ -336,48 +336,15 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        384,
-        -32
+        48,
+        192
       ],
-      "id": "04ef3f7c-e512-4458-97ed-0b222150ebd0",
+      "id": "1e365226-5386-4500-9b78-df6ae6d9c384",
       "name": "Add New Customer Record",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "fUe94vkJLG6SK9KT",
+          "id": "2OcSoCbGb7Ulbuhl",
           "name": "Google Sheets account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "inputDataFieldName": "=[object Object][object Object][object Object]",
-        "name": "={{ $('Product Inquiry Form').item.json.product }}_{{ $now.format('yyyy-MM-dd_HHmmss') }}",
-        "driveId": {
-          "__rl": true,
-          "mode": "list",
-          "value": "My Drive"
-        },
-        "folderId": {
-          "__rl": true,
-          "value": "1FClJGjERJ3daFUZVcdmXcPN7Bw1Lb_2n",
-          "mode": "list",
-          "cachedResultName": "Report",
-          "cachedResultUrl": "https://drive.google.com/drive/folders/1FClJGjERJ3daFUZVcdmXcPN7Bw1Lb_2n"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.googleDrive",
-      "typeVersion": 3,
-      "position": [
-        1056,
-        64
-      ],
-      "id": "c1f78cd8-cebc-40ed-a111-c31a0ebde709",
-      "name": "Upload to Existing Folder",
-      "credentials": {
-        "googleDriveOAuth2Api": {
-          "id": "dwB6UaILuZFPZlP4",
-          "name": "Google Drive account"
         }
       }
     },
@@ -388,10 +355,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        608,
-        64
+        272,
+        288
       ],
-      "id": "0afbf59a-4a19-4d3d-822e-94d43e6bb034",
+      "id": "8bc78805-ecea-4866-bf20-c34547b0c35e",
       "name": "Generate Summary Report"
     },
     {
@@ -404,15 +371,15 @@
       "type": "n8n-nodes-base.convertToFile",
       "typeVersion": 1.1,
       "position": [
-        832,
-        64
+        496,
+        288
       ],
-      "id": "0aaa0619-3221-48e6-bee3-98b90c3c1ca7",
+      "id": "2e4caad0-bc38-4cf1-9e1c-e47e62c457de",
       "name": "Convert to File"
     },
     {
       "parameters": {
-        "sendTo": "=andreimiranda123123@gmail.com",
+        "sendTo": "={{ $json.email }}",
         "subject": "Inquiries",
         "emailType": "text",
         "message": "Thank you for submitting form",
@@ -421,15 +388,15 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
       "position": [
-        608,
-        -224
+        272,
+        0
       ],
-      "id": "1ac69c6b-9910-4d59-904c-1a4b48f581ef",
+      "id": "cb8f12ec-b393-4696-bc73-eec33ac264ee",
       "name": "Send a message",
       "webhookId": "eacb6288-c57d-4662-89bd-db397ba68439",
       "credentials": {
         "gmailOAuth2": {
-          "id": "4tbrjqWUGS7kvGAR",
+          "id": "mcCIKO0v60HECUbI",
           "name": "Gmail account"
         }
       }
@@ -571,14 +538,14 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        320,
-        208
+        -16,
+        432
       ],
-      "id": "f6884bff-a7b2-4ac7-86af-39f58e4396b0",
+      "id": "c577a7a1-ce7a-4371-89a4-7733b3a51427",
       "name": "Update Existing Customer",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "fUe94vkJLG6SK9KT",
+          "id": "2OcSoCbGb7Ulbuhl",
           "name": "Google Sheets account"
         }
       }
@@ -705,15 +672,46 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        336,
-        -224
+        0,
+        0
       ],
-      "id": "2bd3d6d2-bae6-4083-bdd6-25d16dcb6462",
+      "id": "aea01ba5-6ed0-4a04-ad09-11907afff9e4",
       "name": "Log High Priority Inquiry",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "fUe94vkJLG6SK9KT",
+          "id": "2OcSoCbGb7Ulbuhl",
           "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "andreimiranda123123@gmail.com",
+        "subject": "Test",
+        "message": "Download the CSV file for the reports. Thank you",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {
+                "property": "[object Object][object Object][object Object]"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        704,
+        288
+      ],
+      "id": "428551d5-0a18-44f9-8aeb-66d7ec10c37c",
+      "name": "Send a message1",
+      "webhookId": "0ea7e1e6-27a7-44c0-bc0a-ffdd267aa71a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "mcCIKO0v60HECUbI",
+          "name": "Gmail account"
         }
       }
     }
@@ -809,16 +807,11 @@
       "main": [
         [
           {
-            "node": "Upload to Existing Folder",
+            "node": "Send a message1",
             "type": "main",
             "index": 0
           }
         ]
-      ]
-    },
-    "Update Existing Customer": {
-      "main": [
-        []
       ]
     },
     "Log High Priority Inquiry": {
@@ -837,11 +830,11 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "6aca3738-5917-4c96-bd11-ede0fb9206a6",
+  "versionId": "1aad3422-7bf3-4795-a708-4d097e8b5bbc",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "578b25537497e99d4d328919d1005fb21b32967cd27b1388a11a6b2d1d94a8cc"
+    "instanceId": "400eb0047eabc1e61813fea88eaf20841c86c6c6abe77bcf3a9e339855b94c89"
   },
-  "id": "na40B3OAsW9Kqdxt",
+  "id": "iSvB3oTGY8PzxKlV",
   "tags": []
 }
