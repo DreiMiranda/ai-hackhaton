@@ -13,8 +13,24 @@ dependencies:
 kind: app
 version: 0.4.0
 workflow:
-  conversation_variables: []
-  environment_variables: []
+  conversation_variables:
+  - description: llm instruction
+    id: 23338f9d-0488-4f65-8408-f717be7efe31
+    name: instructions
+    selector:
+    - conversation
+    - instructions
+    value: ''
+    value_type: string
+  environment_variables:
+  - description: secret
+    id: d8f507aa-d3c2-4e45-aa72-59231705d7c3
+    name: secret
+    selector:
+    - env
+    - secret
+    value: secret
+    value_type: string
   features:
     file_upload:
       allowed_file_extensions:
@@ -199,88 +215,15 @@ workflow:
       type: custom
       width: 243
     - data:
-        author: JerahmeelT
-        desc: ''
-        height: 88
-        selected: false
-        showAuthor: true
-        text: '{"root":{"children":[{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"Trigger","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":""}],"direction":"ltr","format":"","indent":0,"type":"root","version":1}}'
-        theme: blue
-        title: ''
-        type: ''
-        width: 240
-      height: 88
-      id: '1762840596045'
-      position:
-        x: 24.495594718426617
-        y: 112.26839694121853
-      positionAbsolute:
-        x: 24.495594718426617
-        y: 112.26839694121853
-      selected: false
-      sourcePosition: right
-      targetPosition: left
-      type: custom-note
-      width: 240
-    - data:
-        author: JerahmeelT
-        desc: ''
-        height: 88
-        selected: false
-        showAuthor: true
-        text: '{"root":{"children":[{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"processing
-          node","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":""}],"direction":"ltr","format":"","indent":0,"type":"root","version":1}}'
-        theme: yellow
-        title: ''
-        type: ''
-        width: 240
-      height: 88
-      id: '1762840625405'
-      position:
-        x: 337.67684758464674
-        y: 108.71524330800955
-      positionAbsolute:
-        x: 337.67684758464674
-        y: 108.71524330800955
-      selected: false
-      sourcePosition: right
-      targetPosition: left
-      type: custom-note
-      width: 240
-    - data:
-        author: JerahmeelT
-        desc: ''
-        height: 88
-        selected: false
-        showAuthor: true
-        text: '{"root":{"children":[{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"an
-          end/answer node","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":""}],"direction":"ltr","format":"","indent":0,"type":"root","version":1}}'
-        theme: blue
-        title: ''
-        type: ''
-        width: 240
-      height: 88
-      id: '1762840637625'
-      position:
-        x: 650.3543673070368
-        y: 112.26839694121853
-      positionAbsolute:
-        x: 650.3543673070368
-        y: 112.26839694121853
-      sourcePosition: right
-      targetPosition: left
-      type: custom-note
-      width: 240
-    - data:
         classes:
         - id: '1'
-          name: happy
+          name: query is about subject math
         - id: '2'
-          name: sad
+          name: query is about subject science
         - id: '1762929182536'
-          name: doubtful
+          name: query is about subject history
         - id: '1762929186173'
-          name: hurt
+          name: query is about subject english
         desc: ''
         instructions: ''
         model:
@@ -291,7 +234,7 @@ workflow:
           provider: langgenius/openai/openai
         query_variable_selector:
         - '1762929139389'
-        - intent
+        - subject
         selected: false
         title: Question Classifier
         topics: []
@@ -301,11 +244,11 @@ workflow:
       height: 247
       id: '1762927283530'
       position:
-        x: 696
-        y: 516
+        x: 670
+        y: 577
       positionAbsolute:
-        x: 696
-        y: 516
+        x: 670
+        y: 577
       selected: false
       sourcePosition: right
       targetPosition: left
@@ -327,9 +270,9 @@ workflow:
         prompt_template:
         - id: c186be7b-0cd4-417b-8e17-d62eaf0745e1
           role: system
-          text: "give a short quote . \nuse these as context \n{{#context#}}{{#sys.query#}}"
+          text: "give a concise answer\nuse these as context \n{{#context#}}{{#sys.query#}}"
         selected: false
-        title: 'HAPPY '
+        title: math
         type: llm
         variables: []
         vision:
@@ -353,7 +296,7 @@ workflow:
           '
         desc: ''
         selected: false
-        title: HAPPY ANSWER
+        title: MATH ANSWER
         type: answer
         variables: []
       height: 103
@@ -371,15 +314,15 @@ workflow:
       width: 243
     - data:
         desc: ''
-        instruction: 'extract the intent and classify it as one of the following:
+        instruction: 'extract the subject and classify it as one of the following:
 
-          -happy
+          -math
 
-          -sad
+          -science
 
-          -doubtful
+          -history
 
-          -hurt'
+          -english'
         model:
           completion_params:
             temperature: 0.7
@@ -387,8 +330,8 @@ workflow:
           name: gpt-4o
           provider: langgenius/openai/openai
         parameters:
-        - description: intent of the query
-          name: intent
+        - description: subject of the query
+          name: subject
           required: false
           type: string
         query:
@@ -404,11 +347,11 @@ workflow:
       height: 89
       id: '1762929139389'
       position:
-        x: 363
-        y: 595
+        x: 337.67684758464674
+        y: 631
       positionAbsolute:
-        x: 363
-        y: 595
+        x: 337.67684758464674
+        y: 631
       selected: false
       sourcePosition: right
       targetPosition: left
@@ -430,9 +373,9 @@ workflow:
         prompt_template:
         - id: dfcb47b6-3036-4376-a237-d2d70f5deef9
           role: system
-          text: "give a short quote . \nuse these as context \n{{#context#}}{{#sys.query#}}"
+          text: "give a concise answer\nuse these as context \n{{#context#}}{{#sys.query#}}"
         selected: false
-        title: SAD
+        title: science
         type: llm
         variables: []
         vision:
@@ -466,9 +409,9 @@ workflow:
         prompt_template:
         - id: 5a4e6666-c945-4e48-a79e-960ee51dbcee
           role: system
-          text: "give a short quote . \nuse these as context \n{{#context#}}{{#sys.query#}}"
+          text: "give a concise answer\nuse these as context \n{{#context#}}{{#sys.query#}}"
         selected: false
-        title: DOUBTFUL
+        title: history
         type: llm
         variables: []
         vision:
@@ -502,9 +445,9 @@ workflow:
         prompt_template:
         - id: 64e1d110-f78a-4565-8789-bb5b3a539210
           role: system
-          text: "give a short quote . \nuse these as context \n{{#context#}}{{#sys.query#}}"
+          text: "give a concise answer\nuse these as context \n{{#context#}}{{#sys.query#}}"
         selected: false
-        title: HURT
+        title: english
         type: llm
         variables: []
         vision:
@@ -526,7 +469,7 @@ workflow:
         answer: '{{#1762929219969.text#}}'
         desc: ''
         selected: false
-        title: SAD ANSWER
+        title: SCIENCE ANSWER
         type: answer
         variables: []
       height: 103
@@ -546,7 +489,7 @@ workflow:
         answer: '{{#1762929223164.text#}}'
         desc: ''
         selected: false
-        title: DOUBTFUL ANSWER
+        title: HISTORY ANSWER
         type: answer
         variables: []
       height: 103
@@ -566,7 +509,7 @@ workflow:
         answer: '{{#1762929225602.text#}}'
         desc: ''
         selected: false
-        title: HURT ANSWER
+        title: ENGLISH ANSWER
         type: answer
         variables: []
       height: 103
@@ -613,7 +556,7 @@ workflow:
         selected: false
         showAuthor: true
         text: '{"root":{"children":[{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"extracts
-          emotion from the query","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":""}],"direction":"ltr","format":"","indent":0,"type":"root","version":1}}'
+          subject from the query","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":""}],"direction":"ltr","format":"","indent":0,"type":"root","version":1}}'
         theme: blue
         title: ' (1)'
         type: ''
@@ -638,7 +581,7 @@ workflow:
         selected: false
         showAuthor: true
         text: '{"root":{"children":[{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"classifies
-          the emotion:","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":""},{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"I","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":""}],"direction":"ltr","format":"","indent":0,"type":"root","version":1}}'
+          the query into subject:","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":""},{"children":[],"direction":null,"format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":""}],"direction":"ltr","format":"","indent":0,"type":"root","version":1}}'
         theme: blue
         title: ' (1)'
         type: ''
@@ -676,7 +619,7 @@ workflow:
       positionAbsolute:
         x: 1049.2291739327563
         y: 314.6577399117605
-      selected: true
+      selected: false
       sourcePosition: right
       targetPosition: left
       type: custom-note
@@ -707,6 +650,6 @@ workflow:
       type: custom-note
       width: 240
     viewport:
-      x: 148.55000000000018
-      y: -147.2499999999999
-      zoom: 0.7
+      x: 183.68796176081287
+      y: 56.59303546284809
+      zoom: 0.5946035887205524
